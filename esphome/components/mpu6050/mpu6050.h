@@ -14,6 +14,15 @@ class MPU6050Component : public PollingComponent, public i2c::I2CDevice {
 
   void update() override;
 
+// Mod for GY-87
+  // setI2CMasterModeEnabled(false);
+  // setI2CBypassEnabled(true) ;
+  // setSleepEnabled(false);
+
+  void setI2CMasterModeEnabled(bool enabled);
+  void setI2CBypassEnabled(bool enabled);
+  void setSleepEnabled(bool enabled);
+
   float get_setup_priority() const override;
 
   void set_accel_x_sensor(sensor::Sensor *accel_x_sensor) { accel_x_sensor_ = accel_x_sensor; }
