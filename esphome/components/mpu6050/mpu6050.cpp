@@ -137,6 +137,28 @@ void MPU6050Component::setup() {
     this->mark_failed();
     return;
   }
+  // **** Mod for GY-87 Setup USER_CTRL to disable I2CMasterMode ****
+  uint8_t i2c_mst_en;
+  if (!this->read_byte(MPU6050_REGISTER_USER_CTRL_CFG, &i2c_mst_en)) {
+    this->mark_failed();
+    return;
+  }
+  i2c_mst_en &= ~(1 << MPU6050_BIT_I2C_MST_EN);
+  if (!this->write_byte(MPU6050_REGISTER_USER_CTRL_CFG, i2c_mst_en)) {
+    this->mark_failed();
+    return;
+  }
+  // **** Mod for GY-87 Setup INT_PIN_CFG to enable I2CBypass ****
+  uint8_t int_pin_cfg;
+  if (!this->read_byte(MPU6050_REGISTER_INT_PIN_CFG, &int_pin_cfg)) {
+    this->mark_failed();
+    return;
+  }
+  int_pin_cfg |= (1 << MPU6050_BIT_I2C_BYPASS_EN);
+  if (!this->write_byte(MPU6050_REGISTER_INT_PIN_CFG, int_pin_cfg)) {
+    this->mark_failed();
+    return;
+  }
 
   ESP_LOGV(TAG, "  Setting up Gyro Config...");
   // Set scale - 2000DPS
