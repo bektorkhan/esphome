@@ -8,6 +8,8 @@ static const char *const TAG = "mpu6050";
 
 const uint8_t MPU6050_REGISTER_WHO_AM_I = 0x75;
 const uint8_t MPU6050_REGISTER_POWER_MANAGEMENT_1 = 0x6B;
+const uint8_t MPU6050_REGISTER_USER_CTRL_CFG = 0x6A;
+const uint8_t MPU6050_REGISTER_INT_PIN_CFG = 0x37;
 const uint8_t MPU6050_REGISTER_GYRO_CONFIG = 0x1B;
 const uint8_t MPU6050_REGISTER_ACCEL_CONFIG = 0x1C;
 const uint8_t MPU6050_REGISTER_ACCEL_XOUT_H = 0x3B;
@@ -16,9 +18,95 @@ const uint8_t MPU6050_SCALE_2000_DPS = 0b11;
 const float MPU6050_SCALE_DPS_PER_DIGIT_2000 = 0.060975f;
 const uint8_t MPU6050_RANGE_2G = 0b00;
 const float MPU6050_RANGE_PER_DIGIT_2G = 0.000061f;
+const uint8_t MPU6050_BIT_I2C_BYPASS_EN = 5;
+const uint8_t MPU6050_BIT_I2C_MST_EN = 1;
 const uint8_t MPU6050_BIT_SLEEP_ENABLED = 6;
 const uint8_t MPU6050_BIT_TEMPERATURE_DISABLED = 3;
 const float GRAVITY_EARTH = 9.80665f;
+
+/** Set I2C bypass enabled status.
+ * When this bit is equal to 1 and I2C_MST_EN (Register 106 bit[5]) is equal to
+ * 0, the host application processor will be able to directly access the
+ * auxiliary I2C bus of the MPU-60X0. When this bit is equal to 0, the host
+ * application processor will not be able to directly access the auxiliary I2C
+ * bus of the MPU-60X0 regardless of the state of I2C_MST_EN (Register 0x6A 106
+ * bit[5]).
+ * @param enabled New I2C bypass enabled status
+ * @see MPU6050_RA_INT_PIN_CFG  0x37
+ * @see MPU6050_INTCFG_I2C_BYPASS_EN_BIT  bit[1]
+ */
+void MPU6050_Base::setI2CBypassEnabled(bool enabled) {
+    // I2Cdev::writeBit(devAddr, MPU6050_RA_INT_PIN_CFG, MPU6050_INTCFG_I2C_BYPASS_EN_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
+  uint8_t int_pin_cfg;
+  if (!this->read_byte(MPU6050_REGISTER_INT_PIN_CFG, &int_pin_cfg)) {
+    this->mark_failed();
+    return;
+  }
+  if (!enabled ) {
+    int_pin_cfg &= ~(1 << MPU6050_BIT_I2C_BYPASS_EN);
+  }
+  else
+  {
+    int_pin_cfg |= (1 << MPU6050_BIT_I2C_BYPASS_EN);
+  }
+  if (!this->write_byte(MPU6050_REGISTER_INT_PIN_CFG, int_pin_cfg)) {
+    this->mark_failed();
+    return;
+  }
+ }
+
+/** Set I2C Master Mode enabled status.
+ * @param enabled New I2C Master Mode enabled status
+ * @see getI2CMasterModeEnabled()
+ * @see MPU6050_RA_USER_CTRL 0x6A
+ * @see MPU6050_USERCTRL_I2C_MST_EN_BIT  bit[5]
+ */
+void MPU6050_Base::setI2CMasterModeEnabled(bool enabled) {
+    // I2Cdev::writeBit(devAddr, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
+  uint8_t i2c_mst_en;
+  if (!this->read_byte(MPU6050_REGISTER_USER_CTRL_CFG, &i2c_mst_en)) {
+    this->mark_failed();
+    return;
+  }
+  if (!enabled ) {
+    i2c_mst_en &= ~(1 << MPU6050_BIT_I2C_MST_EN);
+  }
+  else
+  {
+    i2c_mst_en |= (1 << MPU6050_BIT_I2C_MST_EN);
+  }
+  if (!this->write_byte(MPU6050_REGISTER_USER_CTRL_CFG, i2c_mst_en)) {
+    this->mark_failed();
+    return;
+  }
+}
+
+/** Set sleep mode status.
+ * @param enabled New sleep mode enabled status
+ * @see getSleepEnabled()
+ * @see MPU6050_RA_PWR_MGMT_1 0x6B
+ * @see MPU6050_PWR1_SLEEP_BIT  bit[6]
+ */
+void MPU6050Component::setSleepEnabled(bool enabled) {
+    // I2Cdev::writeBit(devAddr, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_SLEEP_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
+  // Setup power management
+  uint8_t power_management;
+  if (!this->read_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, &power_management)) {
+    this->mark_failed();
+    return;
+  }
+  if (!enabled ) {
+    power_management &= ~(1 << MPU6050_BIT_SLEEP_ENABLED);
+  }
+  else
+  {
+    power_management |= (1 << MPU6050_BIT_SLEEP_ENABLED);
+  }
+  if (!this->write_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, power_management)) {
+    this->mark_failed();
+    return;
+  }
+ }
 
 void MPU6050Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MPU6050...");
