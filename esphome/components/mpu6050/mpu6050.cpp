@@ -35,7 +35,7 @@ const float GRAVITY_EARTH = 9.80665f;
  * @see MPU6050_RA_INT_PIN_CFG  0x37
  * @see MPU6050_INTCFG_I2C_BYPASS_EN_BIT  bit[1]
  */
-void MPU6050_Base::setI2CBypassEnabled(bool enabled) {
+void MPU6050Component::setI2CBypassEnabled(bool enabled) {
     // I2Cdev::writeBit(devAddr, MPU6050_RA_INT_PIN_CFG, MPU6050_INTCFG_I2C_BYPASS_EN_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
   uint8_t int_pin_cfg;
   if (!this->read_byte(MPU6050_REGISTER_INT_PIN_CFG, &int_pin_cfg)) {
@@ -61,7 +61,7 @@ void MPU6050_Base::setI2CBypassEnabled(bool enabled) {
  * @see MPU6050_RA_USER_CTRL 0x6A
  * @see MPU6050_USERCTRL_I2C_MST_EN_BIT  bit[5]
  */
-void MPU6050_Base::setI2CMasterModeEnabled(bool enabled) {
+void MPU6050Component::setI2CMasterModeEnabled(bool enabled) {
     // I2Cdev::writeBit(devAddr, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
   uint8_t i2c_mst_en;
   if (!this->read_byte(MPU6050_REGISTER_USER_CTRL_CFG, &i2c_mst_en)) {
