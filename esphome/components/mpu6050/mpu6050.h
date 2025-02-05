@@ -19,9 +19,9 @@ class MPU6050Component : public PollingComponent, public i2c::I2CDevice {
   // setI2CBypassEnabled(true) ;
   // setSleepEnabled(false);
 
-  void setI2CMasterModeEnabled(bool enabled);
-  void setI2CBypassEnabled(bool enabled);
-  void setSleepEnabled(bool enabled);
+  // void setI2CMasterModeEnabled(bool enabled);
+  // void setI2CBypassEnabled(bool enabled);
+  // void setSleepEnabled(bool enabled);
 
   float get_setup_priority() const override;
 
