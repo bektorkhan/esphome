@@ -147,6 +147,7 @@ void MPU6050Component::setup() {
     this->mark_failed();
     return;
   }
+  // Diable I2CMasterMode
   i2c_mst_en &= ~(1 << MPU6050_BIT_I2C_MST_EN);
   if (!this->write_byte(MPU6050_REGISTER_USER_CTRL_CFG, i2c_mst_en)) {
     this->mark_failed();
@@ -158,6 +159,7 @@ void MPU6050Component::setup() {
     this->mark_failed();
     return;
   }
+  // Enable I2CByPass
   int_pin_cfg |= (1 << MPU6050_BIT_I2C_BYPASS_EN);
   if (!this->write_byte(MPU6050_REGISTER_INT_PIN_CFG, int_pin_cfg)) {
     this->mark_failed();
