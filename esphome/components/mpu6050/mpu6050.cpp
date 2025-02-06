@@ -35,7 +35,7 @@ const float GRAVITY_EARTH = 9.80665f;
  * @see MPU6050_RA_INT_PIN_CFG  0x37
  * @see MPU6050_INTCFG_I2C_BYPASS_EN_BIT  bit[1]
  */
-/*
+
 void MPU6050Component::setI2CBypassEnabled(bool enabled) {
     // I2Cdev::writeBit(devAddr, MPU6050_RA_INT_PIN_CFG, MPU6050_INTCFG_I2C_BYPASS_EN_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
   uint8_t int_pin_cfg;
@@ -62,7 +62,8 @@ void MPU6050Component::setI2CBypassEnabled(bool enabled) {
  * @see MPU6050_RA_USER_CTRL 0x6A
  * @see MPU6050_USERCTRL_I2C_MST_EN_BIT  bit[5]
  */
-/*
+
+
 void MPU6050Component::setI2CMasterModeEnabled(bool enabled) {
     // I2Cdev::writeBit(devAddr, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
   uint8_t i2c_mst_en;
@@ -82,14 +83,14 @@ void MPU6050Component::setI2CMasterModeEnabled(bool enabled) {
     return;
   }
 }
-*/
+
 /** Set sleep mode status.
  * @param enabled New sleep mode enabled status
  * @see getSleepEnabled()
  * @see MPU6050_RA_PWR_MGMT_1 0x6B
  * @see MPU6050_PWR1_SLEEP_BIT  bit[6]
  */
-/*
+
 void MPU6050Component::setSleepEnabled(bool enabled) {
     // I2Cdev::writeBit(devAddr, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_SLEEP_BIT, enabled, wireObj);  from https://github.com/jrowberg/i2cdevlib/blob/master/Arduino/MPU6050
   // Setup power management
@@ -110,7 +111,6 @@ void MPU6050Component::setSleepEnabled(bool enabled) {
     return;
   }
  }
-*/
   
 void MPU6050Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MPU6050...");
