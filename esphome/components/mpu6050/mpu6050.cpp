@@ -128,7 +128,8 @@ void MPU6050Component::setup() {
     return;
   }
   // Diable I2CMasterMode
-  i2c_mst_en &= ~(1 << MPU6050_BIT_I2C_MST_EN);
+  // i2c_mst_en &= ~(1 << MPU6050_BIT_I2C_MST_EN);
+  i2c_mst_en &= 0b11011111;
   if (!this->write_byte(MPU6050_REGISTER_USER_CTRL_CFG, i2c_mst_en)) {
     this->mark_failed();
     return;
@@ -140,7 +141,8 @@ void MPU6050Component::setup() {
     return;
   }
   // Enable I2CByPass
-  int_pin_cfg |= (1 << MPU6050_BIT_I2C_BYPASS_EN);
+  // int_pin_cfg |= (1 << MPU6050_BIT_I2C_BYPASS_EN);
+  int_pin_cfg |= 0b00000010;
   if (!this->write_byte(MPU6050_REGISTER_INT_PIN_CFG, int_pin_cfg)) {
     this->mark_failed();
     return;
@@ -158,9 +160,9 @@ void MPU6050Component::setup() {
   power_management &= 0b11111000;
   power_management |= MPU6050_CLOCK_SOURCE_X_GYRO;
   // Disable sleep
-  power_management &= ~(1 << MPU6050_BIT_SLEEP_ENABLED);
+  power_management &= 0b10111111;    // ~(1 << MPU6050_BIT_SLEEP_ENABLED);
   // Enable temperature
-  power_management &= ~(1 << MPU6050_BIT_TEMPERATURE_DISABLED);
+  power_management &= 0b11110111;               // ~(1 << MPU6050_BIT_TEMPERATURE_DISABLED);
   ESP_LOGV(TAG, "  Output power_management: 0b" BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(power_management));
   if (!this->write_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, power_management)) {
     this->mark_failed();
