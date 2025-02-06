@@ -121,26 +121,6 @@ void MPU6050Component::setup() {
     return;
   }
 
-  ESP_LOGV(TAG, "  Setting up Power Management...");
-  // Setup power management
-  uint8_t power_management;
-  if (!this->read_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, &power_management)) {
-    this->mark_failed();
-    return;
-  }
-  ESP_LOGV(TAG, "  Input power_management: 0b" BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(power_management));
-  // Set clock source - X-Gyro
-  power_management &= 0b11111000;
-  power_management |= MPU6050_CLOCK_SOURCE_X_GYRO;
-  // Disable sleep
-  power_management &= ~(1 << MPU6050_BIT_SLEEP_ENABLED);
-  // Enable temperature
-  power_management &= ~(1 << MPU6050_BIT_TEMPERATURE_DISABLED);
-  ESP_LOGV(TAG, "  Output power_management: 0b" BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(power_management));
-  if (!this->write_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, power_management)) {
-    this->mark_failed();
-    return;
-  }
   // **** Mod for GY-87 Setup USER_CTRL to disable I2CMasterMode ****
   uint8_t i2c_mst_en;
   if (!this->read_byte(MPU6050_REGISTER_USER_CTRL_CFG, &i2c_mst_en)) {
@@ -162,6 +142,27 @@ void MPU6050Component::setup() {
   // Enable I2CByPass
   int_pin_cfg |= (1 << MPU6050_BIT_I2C_BYPASS_EN);
   if (!this->write_byte(MPU6050_REGISTER_INT_PIN_CFG, int_pin_cfg)) {
+    this->mark_failed();
+    return;
+  }
+
+  ESP_LOGV(TAG, "  Setting up Power Management...");
+  // Setup power management
+  uint8_t power_management;
+  if (!this->read_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, &power_management)) {
+    this->mark_failed();
+    return;
+  }
+  ESP_LOGV(TAG, "  Input power_management: 0b" BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(power_management));
+  // Set clock source - X-Gyro
+  power_management &= 0b11111000;
+  power_management |= MPU6050_CLOCK_SOURCE_X_GYRO;
+  // Disable sleep
+  power_management &= ~(1 << MPU6050_BIT_SLEEP_ENABLED);
+  // Enable temperature
+  power_management &= ~(1 << MPU6050_BIT_TEMPERATURE_DISABLED);
+  ESP_LOGV(TAG, "  Output power_management: 0b" BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(power_management));
+  if (!this->write_byte(MPU6050_REGISTER_POWER_MANAGEMENT_1, power_management)) {
     this->mark_failed();
     return;
   }
